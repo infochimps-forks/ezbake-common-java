@@ -34,6 +34,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class extends {@link java.util.Properties} to add convenience methods to get primitives besides strings, deal with
  * encrypted values, and load from various resources including streams
@@ -48,6 +51,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 public class EzProperties extends Properties {
 
     private TextCryptoProvider cryptoProvider = null;
+
+    private static Logger logger = LoggerFactory.getLogger(EzProperties.class);
 
     public EzProperties() {
         this(null, false);
@@ -340,7 +345,19 @@ public class EzProperties extends Properties {
             ds = Files.newDirectoryStream(directory, globPattern);
             for(Path p : ds) {
                 Properties pro = new Properties();
-                pro.load(new FileReader(p.toFile()));
+		File propFile = p.toFile();
+		if (propFile.canRead()) {
+		    pro.load(new FileReader(propFile));
+		} else {
+
+		    // This is expected to happen sometimes with our
+		    // configuration, but it's probably helpful to
+		    // know, so let's stick with info-level here.
+
+		    logger.info("I am skipping the properties file {} " +
+				"because I do not have permission to read it.", p);
+
+		}
                 mergeProperties(pro, shouldOverride);
             }
         } finally {
