@@ -41,10 +41,15 @@ import ezbake.thrift.transport.EzSecureServerTransport;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.net.HostAndPort;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A class for some common thrift functions.
  */
 public class ThriftUtils {
+    private static final Logger logger = LoggerFactory.getLogger(ThriftUtils.class);
+
     /**
      * Start a thrift service for TESTING. You should be using the thrift service runner in production
      *
@@ -291,6 +296,8 @@ public class ThriftUtils {
     }
 
     protected static TProtocol getProtocol(HostAndPort hostAndPort, String securityId, Properties properties, TTransportFactory transportFactory) throws Exception {
+        logger.debug("getProtocol for host/port {} and security id {}", hostAndPort, securityId);
+
         TProtocol protocol;
         ThriftConfigurationHelper thriftConfiguration = new ThriftConfigurationHelper(properties);
         TTransport transport = getTransport(properties, hostAndPort, securityId, transportFactory);

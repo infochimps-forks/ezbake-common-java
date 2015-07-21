@@ -312,6 +312,8 @@ public class ThriftClientPool {
      * @return the security id for the application/common service name or null if it could not be found
      * */
     public String getSecurityId(String applicationOrCommonServiceName) {
+        logger.debug("finding security ID for {}", applicationOrCommonServiceName);
+
         String name = Preconditions.checkNotNull(applicationOrCommonServiceName);
         if(name.isEmpty()) {
             return null;
@@ -319,6 +321,7 @@ public class ThriftClientPool {
 
         String securityId = securityIdCache.get(name);
         if(securityId != null) {
+	    logger.debug("found id for {} cached: {}", name, securityId);
             return securityId;
         }
 
@@ -326,8 +329,10 @@ public class ThriftClientPool {
         try {
             if(isCommonService(name, serviceDiscoveryClient)) {
                 securityId = serviceDiscoveryClient.getSecurityIdForCommonService(name);
+		logger.debug("treated {} as common service. id: {}", name, securityId);
             } else {
                 securityId = serviceDiscoveryClient.getSecurityIdForApplication(name);
+		logger.debug("treated {} as uncommon service. id: {}", name, securityId);
             }
         } catch(Exception e) {
             logger.error("Could not find security id for " + name, e);
@@ -369,6 +374,8 @@ public class ThriftClientPool {
                         securityId = getSecurityId(serviceName);
                     } else {
                         //Use your own app's security id
+                        logger.debug("could not find security id for {}. using {}", 
+                                     serviceName, applicationSecurityId);
                         securityId = applicationSecurityId;
                     }
                     return ThriftUtils.getProtocol(hostAndPort, securityId, configuration);

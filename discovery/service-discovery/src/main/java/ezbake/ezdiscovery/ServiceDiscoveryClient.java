@@ -31,9 +31,12 @@ import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.KeeperException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServiceDiscoveryClient implements ServiceDiscovery
 {
+    private static final Logger logger = LoggerFactory.getLogger(ServiceDiscoveryClient.class);
 
     // Our curator constant
     private CuratorFramework zkClient = null;
@@ -340,7 +343,9 @@ public class ServiceDiscoveryClient implements ServiceDiscovery
         	throw new IOException(e);
         }
 
-        return new String(secIdData);
+        String result = new String(secIdData);
+        logger.debug("got security id {} for app name {}", result, applicationName);
+        return result;
     }
 
     /**
@@ -366,7 +371,9 @@ public class ServiceDiscoveryClient implements ServiceDiscovery
         	throw new IOException(e);
         }
 
-        return new String(secIdData);
+        String result = new String(secIdData);
+        logger.debug("got security id {} for service name {}", result, serviceName);
+        return result;
     }
 
     @SuppressWarnings("PMD.EmptyCatchBlock")
