@@ -27,9 +27,53 @@ import java.util.Calendar;
  */
 public final class DateUtils {
 
-    public static Time getCurrentTime() {
-        Time currTime = new Time();
+    public static Time getCurrentTime() 
+    {
+        Calendar calendar = Calendar.getInstance();        
+        return getTimeFromCalendar(calendar);       
+    }
+
+    public static Date getCurrentDate() 
+    {
         Calendar calendar = Calendar.getInstance();
+        return getDateFromCalendar(calendar);
+    }
+
+    public static DateTime getCurrentDateTime() {
+        DateTime currDateTime= new DateTime();
+        currDateTime.setDate(getCurrentDate());
+        currDateTime.setTime(getCurrentTime());
+        return currDateTime;
+    }
+    
+    
+    public static DateTime getDateTimeFromUnixEpoch(long epoch) 
+    {        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(epoch);
+        
+        DateTime dt = new DateTime();
+        dt.setDate(getDateFromCalendar(calendar));
+        dt.setTime(getTimeFromCalendar(calendar));
+        
+        DateTime currDateTime= new DateTime();
+        currDateTime.setDate(getCurrentDate());
+        currDateTime.setTime(getCurrentTime());
+        return currDateTime;
+    }
+
+    private static Date getDateFromCalendar(Calendar calendar)
+    {
+        Date date = new Date();        
+        date.setDay((short) calendar.get(Calendar.DAY_OF_MONTH));
+        date.setMonth((short) (calendar.get(Calendar.MONTH)+1));
+        date.setYear((short) calendar.get(Calendar.YEAR));
+        return date;
+    }
+
+    private static Time getTimeFromCalendar(Calendar calendar)
+    {
+        Time currTime = new Time();        
 
         // get calendar parts
         int offsetMinutes = (calendar.getTimeZone().getOffset(calendar.getTimeInMillis())) / (1000 * 60);
@@ -44,22 +88,8 @@ public final class DateUtils {
         final ezbake.base.thrift.TimeZone tz = new ezbake.base.thrift.TimeZone((short) (offsetMinutes / 60), (short) (offsetMinutes % 60), afterUtc);
         currTime.setTz(tz);
 
-        return currTime;
+        return currTime;        
     }
-
-    public static Date getCurrentDate() {
-        Date currDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        currDate.setDay((short) calendar.get(Calendar.DAY_OF_MONTH));
-        currDate.setMonth((short) (calendar.get(Calendar.MONTH)+1));
-        currDate.setYear((short) calendar.get(Calendar.YEAR));
-        return currDate;
-    }
-
-    public static DateTime getCurrentDateTime() {
-        DateTime currDateTime= new DateTime();
-        currDateTime.setDate(getCurrentDate());
-        currDateTime.setTime(getCurrentTime());
-        return currDateTime;
-    }
+    
+    
 }
