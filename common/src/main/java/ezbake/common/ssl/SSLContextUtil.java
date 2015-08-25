@@ -113,6 +113,9 @@ public class SSLContextUtil {
             String truststorePass,
             String truststoreType
     ) throws SSLContextException, IOException {
+	logger.debug("getting SSL context: keystore {}, type {}. trustStore {}, type {}", 
+		     keystore, keystoreType, truststore, truststoreType);
+
         SSLContext context;
 
         KeyStore keyKeyStore = null;

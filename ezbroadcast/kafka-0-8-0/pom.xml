@@ -24,6 +24,12 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.9.2</artifactId>
+	    <exclusions>
+	      <exclusion>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+	      </exclusion>
+	    </exclusions>
         </dependency>
         <dependency>
             <groupId>com.101tec</groupId>
@@ -33,6 +39,11 @@
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
+
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>log4j-over-slf4j</artifactId>
+	</dependency>
 
         <!-- EzBake dependencies -->
         <dependency>
@@ -56,8 +67,7 @@
                     <artifactSet>
                         <excludes>
                             <exclude>org.apache.zookeeper:zookeeper</exclude>
-                            <exclude>org.slf4j:*</exclude>
-                            <exclude>log4j:log4j</exclude>
+                            <exclude>log4j:*</exclude>
                         </excludes>
                     </artifactSet>
                 </configuration>

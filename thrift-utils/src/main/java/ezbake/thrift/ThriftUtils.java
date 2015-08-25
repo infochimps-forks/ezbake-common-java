@@ -209,6 +209,7 @@ public class ThriftUtils {
 
     public static TTransport getSslClientSocket(String host, int port, Properties properties)
             throws TTransportException {
+	logger.debug("connecting via SSL to {}:{}", host, port);
         TTransport transport = EzSSLTransportFactory.getClientSocket(host, port, 0,
                 new EzSSLTransportFactory.EzSSLTransportParameters(properties));
         return transport;
@@ -296,10 +297,11 @@ public class ThriftUtils {
     }
 
     protected static TProtocol getProtocol(HostAndPort hostAndPort, String securityId, Properties properties, TTransportFactory transportFactory) throws Exception {
-        logger.debug("getProtocol for host/port {} and security id {}", hostAndPort, securityId);
+        logger.debug("getProtocol for host:port {} and security id {}", hostAndPort, securityId);
 
         TProtocol protocol;
         ThriftConfigurationHelper thriftConfiguration = new ThriftConfigurationHelper(properties);
+        logger.debug("about to getTransport for host:port {} and security id {}", hostAndPort, securityId);
         TTransport transport = getTransport(properties, hostAndPort, securityId, transportFactory);
 
         // HsHa is using framed transport with Compact protocol, but others are using binary (for now at least)
@@ -320,14 +322,19 @@ public class ThriftUtils {
         TTransport transport;
         ThriftConfigurationHelper thriftConfiguration = new ThriftConfigurationHelper(configuration);
 
+	logger.debug("getTransport for hostAndPort {}", hostAndPort);
+
         if (thriftConfiguration.getServerMode() == ThriftConfigurationHelper.ThriftServerMode.HsHa) {
+	    logger.debug("opening framed transport to {}", hostAndPort);
             transport = new TFramedTransport(new TSocket(hostAndPort.getHostText(), hostAndPort.getPort()));
         } else {
             if (thriftConfiguration.useSSL()) {
+		logger.debug("opening SSL connection to {}", hostAndPort);
                 transport =
                         ThriftUtils.getSslClientSocket(hostAndPort.getHostText(), hostAndPort.getPort(), configuration);
                 transport = new EzSecureClientTransport(transport, configuration, securityId);
             } else {
+		logger.debug("opening connection in the clear (without SSL) to {}", hostAndPort);
                 transport = new TSocket(hostAndPort.getHostText(), hostAndPort.getPort());
             }
         }

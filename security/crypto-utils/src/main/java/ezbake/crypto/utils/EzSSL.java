@@ -172,6 +172,7 @@ public class EzSSL {
         File inf = getCertificatesDirectoryFile(configuration, source);
         try {
             is = new FileInputStream(inf);
+	    log.debug("successfully got inputStream for {} from filesystem", inf.getPath());
         } catch (FileNotFoundException e) {
             log.debug("Didn't find {} on filesystem. Trying classpath",inf.getPath());
             is = EzSSL.class.getClass().getResourceAsStream(inf.getPath());
@@ -179,8 +180,14 @@ public class EzSSL {
                 // Need to use class.getResouce if java.lang.Class was laoded by a different classloader than EzSSL
                 is = EzSSL.class.getResourceAsStream(inf.getPath());
             }
+	    if (is != null) {
+		log.debug("successfully got inputStream for {} from classpath", inf.getPath());
+	    } else {
+		log.debug("no inputStream for {} after searching classpath", inf.getPath());
+	    }
         }
         if (is == null) {
+	    log.error("unable to load {} from filesystem and classpath", inf.getPath());
             throw new IOException("Unable to load file: " + inf.getPath() + " from filesystem, and " +
                     inf.getPath() + " not on classpath");
         }

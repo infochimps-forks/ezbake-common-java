@@ -29,12 +29,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * User: jhastings
  * Date: 8/20/14
  * Time: 10:30 PM
  */
 public class SslConfigurationHelper {
+    private static final Logger log = LoggerFactory.getLogger(SslConfigurationHelper.class);
 
     /* Defaults when properties are not set */
     public static final String SSL_PROTOCOL = "TLSv1";
@@ -64,7 +68,11 @@ public class SslConfigurationHelper {
         String protocol = ezProperties.getProperty(EzBakePropertyConstants.EZBAKE_SSL_PROTOCOL_KEY);
         if (protocol == null || protocol.isEmpty()) {
             protocol = SSL_PROTOCOL;
-        }
+	    log.debug("SSL protocol was null. setting to {}", protocol);
+        } else {
+	    log.debug("got configured SSL protocol version {}", protocol);
+	}
+
         return protocol;
     }
 

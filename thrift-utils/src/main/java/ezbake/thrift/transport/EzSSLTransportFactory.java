@@ -29,12 +29,16 @@ import java.net.URL;
 import java.security.KeyStore;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * User: jhastings
  * Date: 7/7/14
  * Time: 9:44 AM
  */
 public class EzSSLTransportFactory {
+    private static final Logger logger = LoggerFactory.getLogger(EzSSLTransportFactory.class);
 
     /**
      * Create an SSL TServerSocket for the given parameters
@@ -82,6 +86,8 @@ public class EzSSLTransportFactory {
      * @throws TTransportException
      */
     public static TSocket getClientSocket(String host, int port, int timeout, EzSSLTransportParameters params) throws TTransportException {
+	logger.debug("connecting to {}:{} with timeout {}", host, port, timeout);
+
         if (params == null) {
             throw new TTransportException("Either one of the KeyStore or TrustStore must be set for SSLTransportParameters");
         }
@@ -108,6 +114,7 @@ public class EzSSLTransportFactory {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(params.trustManagerType);
             KeyStore ts = KeyStore.getInstance(params.trustStoreType);
 
+	    logger.debug("getting trustStore input stream for SSL context");
             InputStream tsis = EzSSL.getISFromFileOrClasspath(params.properties, params.trustStore);
             ts.load(tsis, params.trustPass.toCharArray());
             tmf.init(ts);
@@ -115,6 +122,7 @@ public class EzSSLTransportFactory {
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(params.keyManagerType);
             KeyStore ks = KeyStore.getInstance(params.keyStoreType);
 
+	    logger.debug("getting keystore input stream for SSL context");
             InputStream ksis = EzSSL.getISFromFileOrClasspath(params.properties, params.keyStore);
             ks.load(ksis, params.keyPass.toCharArray());
             kmf.init(ks, params.keyPass.toCharArray());
