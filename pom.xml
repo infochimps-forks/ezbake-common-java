@@ -131,7 +131,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>${springweb.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.curator</groupId>
@@ -240,7 +240,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>${springweb.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
